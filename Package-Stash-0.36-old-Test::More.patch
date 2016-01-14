@@ -1,0 +1,526 @@
+diff -up ./t/addsub.t.orig ./t/addsub.t
+--- ./t/addsub.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/addsub.t	2013-09-04 10:03:50.247120380 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 7;
+ use Test::Fatal;
+ 
+ BEGIN { $^P |= 0x210 } # PERLDBf_SUBLINE
+@@ -42,5 +42,3 @@ $foo_stash->add_symbol(
+ 
+ is $DB::sub{'Foo::dunk'}, sprintf "%s:%d-%d", "FileName", 100, 199,
+     '... got the right %DB::sub value for dunk with specified args';
+-
+-done_testing;
+diff -up ./t/anon-basic.t.orig ./t/anon-basic.t
+--- ./t/anon-basic.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/anon-basic.t	2013-09-04 10:03:50.248120379 +0100
+@@ -13,6 +13,8 @@ plan skip_all => "Anonymous stashes in P
+     if $] < 5.014
+     && $Package::Stash::IMPLEMENTATION eq 'PP';
+ 
++plan tests => 10;
++
+ my $Foo = Package::Anon->new('Foo');
+ $Foo->{SOME_CONSTANT} = \1;
+ 
+@@ -399,5 +401,3 @@ $Quuux->{quuuux} = -1;
+ 
+ is_deeply([Package::Stash->new('Quuux')->list_all_symbols], [],
+           "Quuux:: isn't touched");
+-
+-done_testing;
+diff -up ./t/anon.t.orig ./t/anon.t
+--- ./t/anon.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/anon.t	2013-09-04 10:03:50.248120379 +0100
+@@ -14,6 +14,8 @@ plan skip_all => "Anonymous stashes in P
+     if $] < 5.014
+     && $Package::Stash::IMPLEMENTATION eq 'PP';
+ 
++plan tests => 7;
++
+ my $anon = Package::Anon->new;
+ my $stash = Package::Stash->new($anon);
+ my $obj = $anon->bless({});
+@@ -45,5 +47,3 @@ my $obj = $anon->bless({});
+         qr/Undefined subroutine \&__ANON__::baz called/
+     );
+ }
+-
+-done_testing;
+diff -up ./t/bare-anon-basic.t.orig ./t/bare-anon-basic.t
+--- ./t/bare-anon-basic.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/bare-anon-basic.t	2013-09-04 10:03:50.248120379 +0100
+@@ -14,6 +14,8 @@ plan skip_all => "Anonymous stashes in P
+ 
+ plan skip_all => "This isn't really going to work yet, probably";
+ 
++plan tests => 10;
++
+ my $Foo = {};
+ $Foo->{SOME_CONSTANT} = \1;
+ 
+@@ -393,5 +395,3 @@ $Quuux->{quuuux} = -1;
+ 
+ is_deeply([Package::Stash->new('Quuux')->list_all_symbols], [],
+           "Quuux:: isn't touched");
+-
+-done_testing;
+diff -up ./t/bare-anon.t.orig ./t/bare-anon.t
+--- ./t/bare-anon.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/bare-anon.t	2013-09-04 10:03:50.249120378 +0100
+@@ -14,6 +14,8 @@ plan skip_all => "Anonymous stashes in P
+ 
+ plan skip_all => "This isn't really going to work yet, probably";
+ 
++plan tests => 10;
++
+ my $anon = {};
+ my $stash = Package::Stash->new($anon);
+ # no way to bless something into a hashref yet
+@@ -58,5 +60,3 @@ my $stash = Package::Stash->new($anon);
+         undef
+     );
+ }
+-
+-done_testing;
+diff -up ./t/basic.t.orig ./t/basic.t
+--- ./t/basic.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/basic.t	2013-09-04 10:03:50.249120378 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 131;
+ use Test::Fatal;
+ 
+ use Package::Stash;
+@@ -444,5 +444,3 @@ like(
+     qr/^Package::Stash->new must be passed the name of the package to access/,
+     "module name must be a string"
+ );
+-
+-done_testing;
+diff -up ./t/compile-time.t.orig ./t/compile-time.t
+--- ./t/compile-time.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/compile-time.t	2013-09-04 10:03:50.249120378 +0100
+@@ -2,8 +2,6 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 1;
+ 
+ use_ok('CompileTime');
+-
+-done_testing;
+diff -up ./t/edge-cases.t.orig ./t/edge-cases.t
+--- ./t/edge-cases.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/edge-cases.t	2013-09-04 10:03:50.250120376 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 19;
+ use Test::Fatal;
+ 
+ use Package::Stash;
+@@ -109,5 +109,3 @@ SKIP: {
+     my $stash = Package::Stash->new('HasISA');
+     is_deeply([$stash->list_all_symbols('SCALAR')], []);
+ }
+-
+-done_testing;
+diff -up ./t/extension.t.orig ./t/extension.t
+--- ./t/extension.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/extension.t	2013-09-04 10:03:50.250120376 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 15;
+ use Test::Fatal;
+ 
+ {
+@@ -72,5 +72,3 @@ is(exception {
+ }, undef, '... created %Foo::baz successfully');
+ 
+ ok(!defined($Foo::{baz}), '... the %baz slot has still not been created');
+-
+-done_testing;
+diff -up ./t/get.t.orig ./t/get.t
+--- ./t/get.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/get.t	2013-09-04 10:03:50.250120376 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 36;
+ 
+ use Package::Stash;
+ use Scalar::Util;
+@@ -182,5 +182,3 @@ use Scalar::Util;
+              "stash has the right variable");
+     }
+ }
+-
+-done_testing;
+diff -up ./t/impl-selection/basic-pp.t.orig ./t/impl-selection/basic-pp.t
+--- ./t/impl-selection/basic-pp.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/basic-pp.t	2013-09-04 10:03:50.251120375 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 133;
+ use Test::Fatal;
+ 
+ BEGIN { $Package::Stash::IMPLEMENTATION = 'PP' }
+@@ -448,5 +448,3 @@ like(
+     qr/^Package::Stash->new must be passed the name of the package to access/,
+     "module name must be a string"
+ );
+-
+-done_testing;
+diff -up ./t/impl-selection/basic-xs.t.orig ./t/impl-selection/basic-xs.t
+--- ./t/impl-selection/basic-xs.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/basic-xs.t	2013-09-04 10:03:50.251120375 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 133;
+ use Test::Fatal;
+ use Test::Requires 'Package::Stash::XS';
+ 
+@@ -449,5 +449,3 @@ like(
+     qr/^Package::Stash->new must be passed the name of the package to access/,
+     "module name must be a string"
+ );
+-
+-done_testing;
+diff -up ./t/impl-selection/bug-rt-78272.t.orig ./t/impl-selection/bug-rt-78272.t
+--- ./t/impl-selection/bug-rt-78272.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/bug-rt-78272.t	2013-09-04 10:03:50.251120375 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 2;
+ use Test::Fatal;
+ 
+ # https://rt.cpan.org/Public/Bug/Display.html?id=78272
+@@ -22,18 +22,3 @@ like(
+     'Sanity check: forcing package reload throws the exception again'
+ );
+ 
+-is(
+-    exception {
+-        $ENV{PACKAGE_STASH_IMPLEMENTATION} = "PP";
+-        delete $INC{'Package/Stash.pm'};
+-        require Package::Stash;
+-        new_ok(
+-            'Package::Stash' => ['Foo'],
+-            'Loaded and able to create instances'
+-        );
+-    },
+-    undef,
+-    'Valid $ENV value loads correctly'
+-);
+-
+-done_testing;
+diff -up ./t/impl-selection/choice.t.orig ./t/impl-selection/choice.t
+--- ./t/impl-selection/choice.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/choice.t	2013-09-04 10:03:50.252120374 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 2;
+ 
+ my $has_xs = eval "require Package::Stash::XS; 1";
+ 
+@@ -13,5 +13,3 @@ my $expected = $has_xs ? 'XS' : 'PP';
+ is($Package::Stash::IMPLEMENTATION, $expected,
+    "autodetected properly: $expected");
+ can_ok('Package::Stash', 'new');
+-
+-done_testing;
+diff -up ./t/impl-selection/env.t.orig ./t/impl-selection/env.t
+--- ./t/impl-selection/env.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/env.t	2013-09-04 10:03:50.252120374 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 6;
+ 
+ # XXX: work around dumb core segfault bug when you delete stashes
+ sub get_impl { eval '$Package::Stash::IMPLEMENTATION' }
+@@ -35,5 +35,3 @@ SKIP: {
+     is(get_impl, 'PP', '$ENV takes precedence over $Package::Stash::IMPLEMENTATION');
+     can_ok('Package::Stash', 'new');
+ }
+-
+-done_testing;
+diff -up ./t/impl-selection/var.t.orig ./t/impl-selection/var.t
+--- ./t/impl-selection/var.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/impl-selection/var.t	2013-09-04 10:03:50.252120374 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 4;
+ 
+ # XXX: work around dumb core segfault bug when you delete stashes
+ sub get_impl { eval '$Package::Stash::IMPLEMENTATION' }
+@@ -25,5 +25,3 @@ SKIP: {
+     is(get_impl, 'XS', "autodetected properly: XS");
+     can_ok('Package::Stash', 'new');
+ }
+-
+-done_testing;
+diff -up ./t/io.t.orig ./t/io.t
+--- ./t/io.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/io.t	2013-09-04 10:03:50.252120374 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 11;
+ use Test::Fatal;
+ 
+ {
+@@ -47,5 +47,3 @@ use Package::Stash;
+     ok($stash->has_symbol('baz'), "has baz");
+     is($stash->get_symbol('baz'), *Foo::foo{IO}, "got the right baz");
+ }
+-
+-done_testing;
+diff -up ./t/isa.t.orig ./t/isa.t
+--- ./t/isa.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/isa.t	2013-09-04 10:03:50.253120373 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 8;
+ 
+ use Package::Stash;
+ 
+@@ -19,7 +19,10 @@ use Package::Stash;
+     my $stash = Package::Stash->new('Foo');
+     my @ISA = ('Bar');
+     @{$stash->get_or_add_symbol('@ISA')} = @ISA;
++    SKIP: {
++    skip "Test::More >= 0.88 needed for isa_ok() tests on classes", 1 if $Test::More::VERSION < 0.88;
+     isa_ok('Foo', 'Bar');
++    }
+     isa_ok(bless({}, 'Foo'), 'Bar');
+ }
+ 
+@@ -33,17 +36,21 @@ use Package::Stash;
+     {
+         my $isa = $stash->get_or_add_symbol('@ISA');
+         @$isa = ('Baz');
++        SKIP: {
++        skip "Test::More >= 0.88 needed for isa_ok() tests on classes", 1 if $Test::More::VERSION < 0.88;
+         isa_ok('Quux', 'Baz');
++        }
+         isa_ok(bless({}, 'Quux'), 'Baz');
+         ok(Quux->can('foo'));
+     }
+     {
+         my $isa = $stash->get_or_add_symbol('@ISA');
+         @$isa = ('Bar');
++        SKIP: {
++        skip "Test::More >= 0.88 needed for isa_ok() tests on classes", 1 if $Test::More::VERSION < 0.88;
+         isa_ok('Quux', 'Bar');
++        }
+         isa_ok(bless({}, 'Quux'), 'Bar');
+         ok(Quux->can('bar'));
+     }
+ }
+-
+-done_testing;
+diff -up ./t/magic.t.orig ./t/magic.t
+--- ./t/magic.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/magic.t	2013-09-04 10:04:56.321041441 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 14;
+ 
+ use Package::Stash;
+ 
+@@ -77,4 +77,3 @@ SKIP: {
+     is($store, 0, "get_or_add_symbol stores (populated slot)");
+ }
+ 
+-done_testing;
+diff -up ./t/paamayim_nekdotayim.t.orig ./t/paamayim_nekdotayim.t
+--- ./t/paamayim_nekdotayim.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/paamayim_nekdotayim.t	2013-09-04 10:03:50.253120373 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 3;
+ use Test::Fatal;
+ 
+ use Package::Stash;
+@@ -24,5 +24,3 @@ like(
+     qr/^Variable names may not contain ::/,
+     "can't add symbol with ::"
+ );
+-
+-done_testing;
+diff -up ./t/scalar-values.t.orig ./t/scalar-values.t
+--- ./t/scalar-values.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/scalar-values.t	2013-09-04 10:03:50.254120371 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 14;
+ use Test::Fatal;
+ 
+ use B;
+@@ -49,5 +49,3 @@ my $vstring = v1.2.3;
+ is(reftype(\$vstring), ($] < 5.010 ? 'SCALAR' : 'VSTRING'));
+ is(exception { $Bar->add_symbol('$vstring', \$vstring) }, undef,
+    "can add vstring values");
+-
+-done_testing;
+diff -up ./t/stash-deletion.t.orig ./t/stash-deletion.t
+--- ./t/stash-deletion.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/stash-deletion.t	2013-09-04 10:03:50.254120371 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 2;
+ 
+ use Package::Stash;
+ 
+@@ -20,5 +20,3 @@ use Package::Stash;
+     }
+     ok(!$delete->has_symbol('&bar'), "method goes away when stash is deleted");
+ }
+-
+-done_testing;
+diff -up ./t/synopsis.t.orig ./t/synopsis.t
+--- ./t/synopsis.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/synopsis.t	2013-09-04 10:03:50.254120371 +0100
+@@ -2,7 +2,7 @@
+ use strict;
+ use warnings;
+ use lib 't/lib';
+-use Test::More;
++use Test::More tests => 3;
+ 
+ use Package::Stash;
+ 
+@@ -15,5 +15,3 @@ $stash->add_symbol('%foo', {bar => 1});
+ ok(!$stash->has_symbol('$foo'), "doesn't have anything in scalar slot");
+ my $namespace = $stash->namespace;
+ is_deeply(*{ $namespace->{foo} }{HASH}, {bar => 1}, "namespace works properly");
+-
+-done_testing;
+diff -up ./t/warnings.t.orig ./t/warnings.t
+--- ./t/warnings.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./t/warnings.t	2013-09-04 10:05:21.562011163 +0100
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ use strict;
+ use warnings;
+-use Test::More;
++use Test::More tests => 1;
+ 
+ use Package::Stash;
+ 
+@@ -17,5 +17,3 @@ BEGIN {
+ }
+ 
+ is($warnings, '');
+-
+-done_testing;
+diff -up ./xt/author/leaks-debug.t.orig ./xt/author/leaks-debug.t
+--- ./xt/author/leaks-debug.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./xt/author/leaks-debug.t	2013-09-04 10:03:50.255120370 +0100
+@@ -6,6 +6,8 @@ use Test::More;
+ use Test::Fatal;
+ use Test::LeakTrace;
+ 
++plan tests => 45;
++
+ BEGIN { $^P |= 0x210 } # PERLDBf_SUBLINE
+ 
+ use Package::Stash;
+@@ -176,7 +178,10 @@ use Symbol;
+     ok($foo->has_symbol('@ISA'));
+     is(ref($foo->get_symbol('@ISA')), 'ARRAY');
+     is_deeply($foo->get_symbol('@ISA'), ['Exporter']);
++    SKIP: {
++    skip "Test::More >= 0.88 needed for isa_ok() tests on classes", 1 if $Test::More::VERSION < 0.88;
+     isa_ok('Foo', 'Exporter');
++    }
+ }
+ 
+ {
+@@ -226,5 +231,3 @@ use Symbol;
+         eval { $foo->add_symbol('&blorg') };
+     } "doesn't leak on errors";
+ }
+-
+-done_testing;
+diff -up ./xt/author/leaks.t.orig ./xt/author/leaks.t
+--- ./xt/author/leaks.t.orig	2013-09-04 01:29:07.000000000 +0100
++++ ./xt/author/leaks.t	2013-09-04 10:03:50.255120370 +0100
+@@ -6,6 +6,8 @@ use Test::More;
+ use Test::Fatal;
+ use Test::LeakTrace;
+ 
++plan tests => 45;
++
+ use Package::Stash;
+ use Symbol;
+ 
+@@ -174,7 +176,10 @@ use Symbol;
+     ok($foo->has_symbol('@ISA'));
+     is(ref($foo->get_symbol('@ISA')), 'ARRAY');
+     is_deeply($foo->get_symbol('@ISA'), ['Exporter']);
++    SKIP: {
++    skip "Test::More >= 0.88 needed for isa_ok() tests on classes", 1 if $Test::More::VERSION < 0.88;
+     isa_ok('Foo', 'Exporter');
++    }
+ }
+ 
+ {
+@@ -224,5 +229,3 @@ use Symbol;
+         eval { $foo->add_symbol('&blorg') };
+     } "doesn't leak on errors";
+ }
+-
+-done_testing;
